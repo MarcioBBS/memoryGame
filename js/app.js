@@ -1,4 +1,4 @@
-// Create a list of font-awesome  cards
+// Create a list of font-awesome to be inserted in the cards
 const cardClasses = ['fa-diamond','fa-paper-plane-o','fa-anchor',
             'fa-bolt', 'fa-cube', 'fa-anchor',
             'fa-leaf', 'fa-bicycle', 'fa-diamond',
@@ -6,6 +6,7 @@ const cardClasses = ['fa-diamond','fa-paper-plane-o','fa-anchor',
             'fa-bolt','fa-bicycle','fa-paper-plane-o',
             'fa-cube'];
 
+//Create a list of cards
 function createCard(cardClass){
     const cardShuffled = shuffle(cardClass);
     let deck = document.querySelector('.deck'); 
@@ -14,12 +15,32 @@ function createCard(cardClass){
     //Generate the cards
     cardShuffled.forEach(function(item){
         cardList.push(`<li class="card"><i class="fa ${item}"></i></li>`);
-        deck.innerHTML = cardList;            
+        deck.innerHTML = cardList.join('');            
     });    
     
-    return cardList;
-    
+    return deck;    
 }
+
+//Flip the cards 
+function flipCards(cards) {
+    let flippedCards = [];    
+    let click = 1;
+    cards.addEventListener('click',function(evt){
+                
+        if (evt.target.nodeName === 'LI' && click <= 2){
+            evt.target.classList.add('open','show');           
+            flippedCards[click] = evt.target;
+            click++;            
+        }       
+    });
+    
+    return flippedCards;
+}
+
+function checkMatch(flippedCards){
+    console.log(flippedCards);
+}
+
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -36,7 +57,9 @@ function shuffle(array) {
     return array;
 }
 
-createCard(cardClasses);
+
+const cards =  createCard(cardClasses);
+let flipped = flipCards(cards);
 
 /*
  * set up the event listener for a card. If a card is clicked:
