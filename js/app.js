@@ -1,10 +1,22 @@
+function init(){
+    const cardSymbol = createCardSymbol();
+    const cardList =  createCard(cardSymbol);
+    toggleCards(cardList);
+}
+
+init();
+
 // Create a list of font-awesome to be inserted in the cards
-const cardClasses = ['fa-diamond','fa-paper-plane-o','fa-anchor',
+function createCardSymbol() {
+    const cardClasses = ['fa-diamond','fa-paper-plane-o','fa-anchor',
             'fa-bolt', 'fa-cube', 'fa-anchor',
             'fa-leaf', 'fa-bicycle', 'fa-diamond',
             'fa-bomb', 'fa-leaf', 'fa-bomb',
             'fa-bolt','fa-bicycle','fa-paper-plane-o',
             'fa-cube'];
+    
+    return cardClasses;
+}
 
 //Create a list of cards
 function createCard(cardClass){
@@ -14,33 +26,54 @@ function createCard(cardClass){
     
     //Generate the cards
     cardShuffled.forEach(function(item){
-        cardList.push(`<li class="card"><i class="fa ${item}"></i></li>`);
-        deck.innerHTML = cardList.join('');            
+        cardList.push(`<li class="card" data-card="${item}"><i class="fa ${item}"></i></li>`);
+        deck.innerHTML = cardList.join('');
     });    
     
+    //return only the List of LI's
     return deck;    
 }
 
-//Flip the cards 
-function flipCards(cards) {
+
+//Toggle the cards 
+function toggleCards(cards) {
     let flippedCards = [];    
-    let click = 1;
+    let isAMatch;
     cards.addEventListener('click',function(evt){
                 
-        if (evt.target.nodeName === 'LI' && click <= 2){
+        if (evt.target.nodeName === 'LI' && flippedCards.length <= 1){
             evt.target.classList.add('open','show');           
-            flippedCards[click] = evt.target;
-            click++;            
-        }       
-    });
-    
-    return flippedCards;
+            flippedCards.push(evt.target);
+            
+            if (flippedCards.length === 2) {
+                let card1 = flippedCards[0].dataset.card;
+                let card2 = flippedCards[1].dataset.card;
+                isAMatch = compareCards(card1, card2);                
+                
+                if (isAMatch) {
+                    flippedCards[0].classList.add('match');
+                    flippedCards[1].classList.add('match');
+                } else {
+                    flippedCards[0].classList.remove('open', 'show');
+                    flippedCards[1].classList.remove('open', 'show');
+                  }
+                
+                flippedCards = [];
+            }
+        }   
+       
+    });    
 }
 
-function checkMatch(flippedCards){
-    console.log(flippedCards);
-}
 
+//Compare the symbol of the flipped cards
+function compareCards(card1,card2){    
+    if (card1 === card2){
+        return true;
+    } else{
+        return false;
+      }
+}
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -57,9 +90,6 @@ function shuffle(array) {
     return array;
 }
 
-
-const cards =  createCard(cardClasses);
-let flipped = flipCards(cards);
 
 /*
  * set up the event listener for a card. If a card is clicked:
