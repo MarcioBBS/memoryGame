@@ -37,34 +37,30 @@ function createCard(cardClass){
 
 //Toggle the cards 
 function toggleCards(cards) {
+    let card1, card2;
     let flippedCards = [];    
     let isAMatch;
     cards.addEventListener('click',function(evt){
                 
-        if (evt.target.nodeName === 'LI' && flippedCards.length <= 1){
+        if (evt.target.nodeName === 'LI' && flippedCards.length <= 1 && !evt.target.classList.contains('open','show')) {
             evt.target.classList.add('open','show');           
             flippedCards.push(evt.target);
             
             if (flippedCards.length === 2) {
-                let card1 = flippedCards[0].dataset.card;
-                let card2 = flippedCards[1].dataset.card;
+                card1 = flippedCards[0].dataset.card;
+                card2 = flippedCards[1].dataset.card;
                 isAMatch = compareCards(card1, card2);                
                 
                 if (isAMatch) {
                     flippedCards[0].classList.add('match');
-                    flippedCards[1].classList.add('match');
+                    flippedCards[1].classList.add('match');                     
                 } else {
                          //work around
                          card1 = flippedCards[0];
                          card2 = flippedCards[1];
                          setTimeout(() => {                                                        
                             card1.classList.remove('open', 'show');
-                            card2.classList.remove('open', 'show');
-                            
-                            // The solution below does NOT work. Why ?
-                            //flippedCards[0].classList.remove('open', 'show'); 
-                            //flippedCards[1].classList.remove('open', 'show'); 
-                             
+                            card2.classList.remove('open', 'show');                     
                          }, 880);                       
                     }
                 
@@ -110,4 +106,3 @@ function shuffle(array) {
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
-
