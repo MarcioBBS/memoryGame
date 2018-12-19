@@ -51,6 +51,13 @@ h1 {
     margin: 0 0 3em;
 }
 
+.deck-panel {
+    width: 660px;
+    min-height: 680px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.5);
+}
+
 .deck .card {
     height: 125px;
     width: 125px;
@@ -106,4 +113,13 @@ h1 {
 .score-panel .restart {
     float: right;
     cursor: pointer;
+}
+
+.yellow-star li {
+    color: darkgoldenrod;
+    font-size: 1.5em;
+}
+
+.stars .remove-star i {
+    display: none;
 }
