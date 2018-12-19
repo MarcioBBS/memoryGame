@@ -1,6 +1,6 @@
 # memoryGame
 
-## Rules of the **Memory Game**
+### Rules of the **Memory Game**
 - 10 moves for 5 stars 
 - 15 moves for 4 stars
 - 20 moves for 3 stars
