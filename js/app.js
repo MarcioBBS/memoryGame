@@ -1,3 +1,8 @@
+let moveCounter = 0;
+let countMatch  = 0;
+const resetButtom = document.querySelector('.restart');
+resetButtom.addEventListener('click', gameReset);
+
 function init(){
     const cardSymbol = createCardSymbol();
     const cardList =  createCard(cardSymbol);
@@ -5,6 +10,13 @@ function init(){
 }
 
 init();
+
+function gameReset() {
+    document.querySelector('.moves').textContent = '0';    
+    moveCounter = 0;
+    resetStar();
+    init();
+}
 
 // Create a list of font-awesome to be inserted in the cards
 function createCardSymbol() {
@@ -30,50 +42,87 @@ function createCard(cardClass){
         deck.innerHTML = cardList.join('');
     });    
     
-    //return only the List of LI's
     return deck;    
 }
 
 
+function displayMoves(counter) {
+    let moveIndicator = document.querySelector('.moves');
+    moveIndicator.textContent = counter;
+    
+    return counter;
+}
+
+function scoreStar(points) {
+    
+    if (points >= 8 ) {
+        document.querySelector('#star1').classList.add('remove-star');   
+    }
+    
+    if (points >= 16 ) {
+        document.querySelector('#star2').classList.add('remove-star');
+    }
+    
+    if (points >= 24 ) {
+        gameReset();
+    }
+}
+
+function resetStar(){    
+    document.querySelector(' #star1').classList.remove('remove-star');
+    document.querySelector('#star2').classList.remove('remove-star');    
+}
+
+function resetMoves(){
+    const moveIndicator = document.querySelector('.moves');
+    moveIndicator.textContent = '0';
+}
+
 //Toggle the cards 
 function toggleCards(cards) {
     let card1, card2;
-    let flippedCards = [];    
-    let isAMatch;
-    cards.addEventListener('click',function(evt){
+    let openCards = [];
+    
+        cards.addEventListener('click',function(evt){              
                 
-        if (evt.target.nodeName === 'LI' && flippedCards.length <= 1 && !evt.target.classList.contains('open','show')) {
+        if (evt.target.nodeName === 'LI' && openCards.length <= 1 && !evt.target.classList.contains('open','show')) {
             evt.target.classList.add('open','show');           
-            flippedCards.push(evt.target);
+            openCards.push(evt.target);
             
-            if (flippedCards.length === 2) {
-                card1 = flippedCards[0].dataset.card;
-                card2 = flippedCards[1].dataset.card;
-                isAMatch = compareCards(card1, card2);                
+            if (openCards.length === 2) {
+                card1 = openCards[0].dataset.card;
+                card2 = openCards[1].dataset.card;
+                moveCounter++;
                 
-                if (isAMatch) {
-                    flippedCards[0].classList.add('match');
-                    flippedCards[1].classList.add('match');                     
-                } else {
-                         //work around
-                         card1 = flippedCards[0];
-                         card2 = flippedCards[1];
+                if (compareCards(card1, card2)) {
+                    openCards[0].classList.add('match');
+                    openCards[1].classList.add('match');                     
+                    
+                    if (countMatch === 8) {
+                        //cover the panel deck or create a background container with the results. 
+                        document.querySelector('.deck').classList.add('deck-panel');
+                    }
+                    
+                } else {                         
+                         card1 = openCards[0];
+                         card2 = openCards[1];
                          setTimeout(() => {                                                        
                             card1.classList.remove('open', 'show');
                             card2.classList.remove('open', 'show');                     
                          }, 880);                       
                     }
-                
-                flippedCards = [];
+                //reset the list of open cards
+                openCards = [];                
             }
         }   
-       
+       scoreStar(displayMoves(moveCounter));
     });    
 }
 
 //Compare the symbol of the flipped cards
 function compareCards(card1,card2){    
     if (card1 === card2){
+        countMatch++;
         return true;
     } else{
         return false;
