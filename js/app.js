@@ -1,19 +1,31 @@
-let moveCounter = 0;
-let countMatch  = 0;
-const resetButtom = document.querySelector('.restart');
-resetButtom.addEventListener('click', gameReset);
+let startGame;
+let endGame;
+let flagTimer = 0;
 
-function init(){
+//variable to increment the numbers of moves. 2 clicks (at different cards) means 1 move. 
+let moveCounter = 0;
+
+//variable to check if the all the cards match
+let countMatch  = 0;
+
+function init(){    
     const cardSymbol = createCardSymbol();
     const cardList =  createCard(cardSymbol);
-    toggleCards(cardList);
+    toggleCards(cardList);    
+    document.querySelector('.restart').addEventListener('click', gameReset);
+    document.querySelector('#try-again').addEventListener('click', gameReset);
 }
 
 init();
 
 function gameReset() {
+    document.querySelector('#winner-block').classList.add('score-display-none');
     document.querySelector('.moves').textContent = '0';    
+    countMatch  = 0;
     moveCounter = 0;
+    flagTimer = 0;
+    startGame = 0;
+    endGame = 0;
     resetStar();
     init();
 }
@@ -55,22 +67,23 @@ function displayMoves(counter) {
 
 function scoreStar(points) {
     
-    if (points >= 8 ) {
+    if (points > 8 ) {
         document.querySelector('#star1').classList.add('remove-star');   
     }
     
-    if (points >= 16 ) {
+    if (points > 16 ) {
         document.querySelector('#star2').classList.add('remove-star');
     }
     
-    if (points >= 24 ) {
-        gameReset();
+    if (points > 20 ) {
+        document.querySelector('#star3').classList.add('remove-star');
     }
 }
 
 function resetStar(){    
-    document.querySelector(' #star1').classList.remove('remove-star');
+    document.querySelector('#star1').classList.remove('remove-star');
     document.querySelector('#star2').classList.remove('remove-star');    
+    document.querySelector('#star3').classList.remove('remove-star');    
 }
 
 function resetMoves(){
@@ -78,12 +91,55 @@ function resetMoves(){
     moveIndicator.textContent = '0';
 }
 
+function getElementId(id){    
+    return document.querySelector(id);
+}
+
+function winnerMessage(message){ 
+    getElementId('#game-score').innerHTML = message;
+    getElementId('#game-time').innerHTML = ' You time was: ' + (endGame-startGame)/1000 + ' Seconds.';
+    getElementId('#winner-block').classList.remove('score-display-none');
+}
+
+
+function  setWinner(){  
+    
+    endGame = new Date();
+
+    if (moveCounter === 8){
+        winnerMessage(`You did excelente.`);        
+    }
+    
+    if (moveCounter > 8 && moveCounter <= 15){
+         winnerMessage(`You did good.`);
+    }
+    
+    if (moveCounter => 16 && moveCounter <= 20){
+        winnerMessage(`You did ok.`) ;      
+    }
+    
+    if (moveCounter > 20){
+        winnerMessage(`You could do it better.`);      
+    }
+           
+}
+
+function setGameTimer(){
+    flagTimer++ ; 
+        
+    if (flagTimer === 1){
+        startGame = new Date();
+    }
+}
+
 //Toggle the cards 
 function toggleCards(cards) {
     let card1, card2;
     let openCards = [];
     
-        cards.addEventListener('click',function(evt){              
+     cards.addEventListener('click',function(evt){ 
+        
+        setGameTimer();
                 
         if (evt.target.nodeName === 'LI' && openCards.length <= 1 && !evt.target.classList.contains('open','show')) {
             evt.target.classList.add('open','show');           
@@ -98,9 +154,8 @@ function toggleCards(cards) {
                     openCards[0].classList.add('match');
                     openCards[1].classList.add('match');                     
                     
-                    if (countMatch === 8) {
-                        //cover the panel deck or create a background container with the results. 
-                        document.querySelector('.deck').classList.add('deck-panel');
+                    if (countMatch === 8) {                                                
+                        setWinner();                        
                     }
                     
                 } else {                         
@@ -115,7 +170,7 @@ function toggleCards(cards) {
                 openCards = [];                
             }
         }   
-       scoreStar(displayMoves(moveCounter));
+       scoreStar(displayMoves(moveCounter));          
     });    
 }
 
@@ -143,15 +198,3 @@ function shuffle(array) {
 
     return array;
 }
-
-
-/*
- * set up the event listener for a card. If a card is clicked:
- *  - display the card's symbol (put this functionality in another function that you call from this one)
- *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
- *  - if the list already has another card, check to see if the two cards match
- *    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
- *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
- *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
- *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
- */
